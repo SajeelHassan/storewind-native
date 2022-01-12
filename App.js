@@ -1,29 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import AppLoading from "expo-app-loading";
-import CartNavbar from "./Components/CartNavbar";
-import Content from "./Components/ProductDetails/Content";
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CameraCanvas from "./pages/CameraCanvas";
 import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 
-const getFonts = async () =>
-  FontFace.loadAsync({
-    "NunitoSans-Bold": require("./assets/fonts/NunitoSans-Regular.ttf"),
-  });
-
+const Stack = createNativeStackNavigator();
 export default function App() {
-  // getFonts();
-
-  return <Cart />;
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Scan Product" component={CameraCanvas} />
+        <Stack.Screen name="Product Details" component={ProductDetails} />
+        <Stack.Screen name="Bill" component={Cart} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "rgba(196, 196, 196, 0.81);",
-    // alignItems: "center",
-    // justifyContent: "center",
-  },
-});

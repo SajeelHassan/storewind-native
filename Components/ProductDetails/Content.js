@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
-export default function Content() {
+export default function Content({ showScanFn }) {
   return (
     <View style={styles.container}>
       <View style={styles.detailsView}>
@@ -28,7 +28,12 @@ export default function Content() {
                 <Text style={styles.prodCurrency}>PKR.</Text>16.00
               </Text>
 
-              <MaterialIcons name="add-circle" size={40} color="#5A6CF3" />
+              <MaterialIcons
+                name="add-circle"
+                size={40}
+                color="#5A6CF3"
+                onPress={showScanFn}
+              />
             </View>
           </View>
         </View>

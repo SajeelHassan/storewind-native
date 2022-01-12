@@ -49,7 +49,7 @@ const CARTPRODUCTS = [
   },
 ];
 
-export default function Cart() {
+export default function Cart({ navigation }) {
   const [totalBill, setTotalBill] = useState(0);
   const updateTotal = (amount, sign) => {
     if (sign) {
@@ -58,9 +58,21 @@ export default function Cart() {
       setTotalBill((prevAmount) => prevAmount - amount);
     }
   };
+  const showCartHandler = () => {
+    navigation.navigate("Bill");
+  };
+  const showScanHandler = () => {
+    navigation.navigate("Scan Product");
+  };
   return (
     <View style={styles.container}>
-      <CartNavbar />
+      <CartNavbar
+        showScan={true}
+        showCartFn={showCartHandler}
+        showScanFn={showScanHandler}
+        showScan={true}
+        showCart={false}
+      />
       <View style={styles.cartItemsContainer}>
         <View style={styles.runningBill}>
           <Text style={styles.runningBillTitle}>Running Bill </Text>
@@ -75,7 +87,9 @@ export default function Cart() {
         <FlatList
           style={styles.listWrapper}
           data={CARTPRODUCTS}
-          renderItem={(item) => <CartItem data={item} updateTotal={updateTotal} />}
+          renderItem={(item) => (
+            <CartItem data={item} updateTotal={updateTotal} />
+          )}
         />
       </View>
     </View>

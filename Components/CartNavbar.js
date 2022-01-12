@@ -1,32 +1,36 @@
 import { StyleSheet, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
-export default function CartNavbar({ price }) {
+export default function CartNavbar({
+  price,
+  showScan,
+  showCart,
+  showScanFn,
+  showCartFn,
+}) {
   return (
     <View style={styles.wrapper}>
-      <MaterialIcons
-        name="arrow-back-ios"
-        size={30}
-        color="black"
-        onPress={() => console.log("Back Pressed!")}
-      />
+      {showScan && (
+        <MaterialIcons
+          name="qr-code-scanner"
+          size={35}
+          color="black"
+          onPress={showScanFn}
+        />
+      )}
       {price ? (
         <Text style={styles.priceText}>
           PKR. <Text style={styles.priceTextBig}>24.00</Text>
         </Text>
       ) : null}
-      {/* <MaterialIcons
-        name="shopping-cart"
-        size={35}
-        color="black"
-        onPress={() => console.log("Cart Pressed!")}
-      /> */}
-      <MaterialIcons
-        name="receipt-long"
-        size={35}
-        color="black"
-        onPress={() => console.log("Bill Pressed!")}
-      />
+      {showCart && (
+        <MaterialIcons
+          name="receipt-long"
+          size={35}
+          color="black"
+          onPress={showCartFn}
+        />
+      )}
     </View>
   );
 }
@@ -35,7 +39,7 @@ const styles = StyleSheet.create({
   wrapper: {
     // backgroundColor: "red",
     padding: 22,
-    paddingTop: 30,
+    paddingTop: 48,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
