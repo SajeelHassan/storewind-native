@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Text, View, StyleSheet, Button } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import CartNavbar from "../Components/CartNavbar";
+import { barcodeContext } from "../Components/Contexts/barcodeContext";
 
 export default function CameraCanvas({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-  const [codeData, setCodeData] = useState(null);
+  const { barcode, setBarcode } = useContext(barcodeContext);
   const askForCameraPermission = () => {
     (async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -15,15 +16,18 @@ export default function CameraCanvas({ navigation }) {
   };
   useEffect(() => {
     askForCameraPermission();
-    // setScanned(false);
   }, []);
-
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    setCodeData(data);
+    setBarcode(data);
     navigation.navigate("Product Details");
   };
-
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      setScanned(false);
+    });
+    return unsubscribe;
+  }, [navigation]);
   if (hasPermission === null) {
     return (
       <View style={styles.container}>
@@ -57,10 +61,12 @@ export default function CameraCanvas({ navigation }) {
         showCart={true}
       />
       <View style={styles.scannerWrapper}>
-        <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={styles.barCodeScanner}
-        />
+        {scanned ? null : (
+          <BarCodeScanner
+            onBarCodeScanned={handleBarCodeScanned}
+            style={styles.barCodeScanner}
+          />
+        )}
       </View>
     </View>
   );

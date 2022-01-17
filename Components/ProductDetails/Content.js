@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
-export default function Content({ showScanFn }) {
+export default function Content({ showScanFn, prodDetails }) {
   return (
     <View style={styles.container}>
       <View style={styles.detailsView}>
@@ -9,23 +9,31 @@ export default function Content({ showScanFn }) {
         <View style={styles.contentCardContainer}>
           <View style={styles.contentWrapper}>
             <View style={styles.productNameView}>
-              <Text style={styles.prodName}>Product Name</Text>
-              <Text style={styles.prodOff}>15% Off</Text>
+              <Text style={styles.prodName}>{prodDetails.name}</Text>
+              <Text style={styles.prodOff}>
+                {prodDetails.discount.toFixed(2)} Rs Off
+              </Text>
             </View>
-            <Text style={styles.prodBrand}>Brand Name</Text>
+            <Text style={styles.prodBrand}>{prodDetails.brand}</Text>
 
             <View style={styles.prodAddView}>
-              <Text
-                style={{
-                  textDecorationLine: "line-through",
-                  fontSize: 18,
-                  lineHeight: 28,
-                }}
-              >
-                <Text style={styles.prodCurrency}>PKR. </Text>24.00
-              </Text>
+              {prodDetails.discount === 0 ? null : (
+                <Text
+                  style={{
+                    textDecorationLine: "line-through",
+                    fontSize: 18,
+                    lineHeight: 28,
+                  }}
+                >
+                  <Text style={styles.prodCurrency}>PKR. </Text>
+                  {prodDetails.price}
+                </Text>
+              )}
               <Text style={styles.prodNewPrice}>
-                <Text style={styles.prodCurrency}>PKR.</Text>16.00
+                <Text style={styles.prodCurrency}>PKR.</Text>
+                {prodDetails.discount === 0
+                  ? prodDetails.price.toFixed(2)
+                  : (prodDetails.price - prodDetails.discount).toFixed(2)}
               </Text>
 
               <MaterialIcons

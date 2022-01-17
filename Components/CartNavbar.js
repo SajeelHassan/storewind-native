@@ -20,7 +20,7 @@ export default function CartNavbar({
       )}
       {price ? (
         <Text style={styles.priceText}>
-          PKR. <Text style={styles.priceTextBig}>24.00</Text>
+          PKR. <Text style={styles.priceTextBig}>{price}</Text>
         </Text>
       ) : null}
       {showCart && (
