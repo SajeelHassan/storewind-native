@@ -5,20 +5,24 @@ import CameraCanvas from "./pages/CameraCanvas";
 import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import { barcodeContext } from "./Components/Contexts/barcodeContext";
+import { cartProductsContext } from "./Components/Contexts/cartProductsContext";
 
 const Stack = createNativeStackNavigator();
 export default function App() {
   const [barcode, setBarcode] = useState(null);
-  
+  const [cartProducts, setCartProducts] = useState([]);
+
   return (
-    <barcodeContext.Provider value={{ barcode, setBarcode }}>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Scan Product" component={CameraCanvas} />
-          <Stack.Screen name="Product Details" component={ProductDetails} />
-          <Stack.Screen name="Bill" component={Cart} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </barcodeContext.Provider>
+    <cartProductsContext.Provider value={{ cartProducts, setCartProducts }}>
+      <barcodeContext.Provider value={{ barcode, setBarcode }}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name="Scan Product" component={CameraCanvas} />
+            <Stack.Screen name="Product Details" component={ProductDetails} />
+            <Stack.Screen name="Bill" component={Cart} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </barcodeContext.Provider>
+    </cartProductsContext.Provider>
   );
 }

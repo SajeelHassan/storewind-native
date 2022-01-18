@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
-export default function Content({ showScanFn, prodDetails }) {
+export default function Content({ addToCart, prodDetails }) {
   return (
     <View style={styles.container}>
       <View style={styles.detailsView}>
@@ -40,7 +40,7 @@ export default function Content({ showScanFn, prodDetails }) {
                 name="add-circle"
                 size={40}
                 color="#5A6CF3"
-                onPress={showScanFn}
+                onPress={addToCart}
               />
             </View>
           </View>

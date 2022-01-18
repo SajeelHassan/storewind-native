@@ -3,11 +3,14 @@ import { Text, View, StyleSheet, Button } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import CartNavbar from "../Components/CartNavbar";
 import { barcodeContext } from "../Components/Contexts/barcodeContext";
+import { cartProductsContext } from "../Components/Contexts/cartProductsContext";
 
 export default function CameraCanvas({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const { barcode, setBarcode } = useContext(barcodeContext);
+  const { cartProducts, setCartProducts } = useContext(cartProductsContext);
+
   const askForCameraPermission = () => {
     (async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -16,10 +19,12 @@ export default function CameraCanvas({ navigation }) {
   };
   useEffect(() => {
     askForCameraPermission();
+    // setScanned(false);
   }, []);
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     setBarcode(data);
+
     navigation.navigate("Product Details");
   };
   useEffect(() => {
@@ -63,7 +68,7 @@ export default function CameraCanvas({ navigation }) {
       <View style={styles.scannerWrapper}>
         {scanned ? null : (
           <BarCodeScanner
-            onBarCodeScanned={handleBarCodeScanned}
+            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
             style={styles.barCodeScanner}
           />
         )}

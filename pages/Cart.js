@@ -1,56 +1,70 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { StyleSheet, Text, View, FlatList } from "react-native";
 import CartItem from "../Components/Cart/CartItem";
 import CartNavbar from "../Components/CartNavbar";
 import { MaterialIcons } from "@expo/vector-icons";
+import { cartProductsContext } from "../Components/Contexts/cartProductsContext";
+import { barcodeContext } from "../Components/Contexts/barcodeContext";
 
-const CARTPRODUCTS = [
+const products = [
   {
-    brand: "Shezan",
-    name: "Apple Juice",
-    price: 149,
-    id: 1,
+    id: "1",
+    name: "Knife",
+    storeId: "20",
+    price: 18.99,
+    discount: 0,
+    brand: "MAC & Chezz",
+    categories: ["Kitchen"],
+    subCatagories: ["Cutlory"],
+    tags: ["Cooking", "Cutting"],
+    location: "Aisle 3",
+    inStock: "98",
+    barCode: "8964002488865",
+    modified: Date.now(),
+    imgUrl:
+      "https://icon-library.com/images/product-icon-png/product-icon-png-11.jpg",
   },
   {
-    brand: "Cadbury",
-    name: "Dairy Milk",
-    price: 549,
-    id: 2,
+    id: "2",
+    name: "Pillow",
+    storeId: "20",
+    price: 10.99,
+    discount: 10.0,
+    brand: "Good Night",
+    categories: ["Furniture"],
+    subCatagories: ["Bedroom"],
+    tags: ["Sleeping", "Laying"],
+    location: "Aisle 5",
+    inStock: "24",
+    barCode: "abf-422-ageo",
+    modified: Date.now(),
+    imgUrl:
+      "https://icon-library.com/images/product-icon-png/product-icon-png-11.jpg",
   },
   {
-    brand: "Yokuzma",
-    name: "Batteries 4V",
-    price: 249,
-    id: 3,
-  },
-  {
-    brand: "Cadbury",
-    name: "Dairy Milk",
-    price: 549,
-    id: 4,
-  },
-  {
-    brand: "Yokuzma",
-    name: "Batteries 4V",
-    price: 249,
-    id: 5,
-  },
-  {
-    brand: "Cadbury",
-    name: "Dairy Milk",
-    price: 549,
-    id: 6,
-  },
-  {
-    brand: "Yokuzma",
-    name: "Batteries 4V",
-    price: 249,
-    id: 7,
+    id: "3",
+    name: "Light",
+    storeId: "20",
+    price: 10.99,
+    discount: 10.0,
+    brand: "Bright n Shine",
+    categories: ["Furniture"],
+    subCatagories: ["Bedroom"],
+    tags: ["Sleeping", "Laying"],
+    location: "Aisle 3",
+    inStock: "49",
+    barCode: "134-dfew-2941",
+    modified: Date.now(),
+    imgUrl:
+      "https://icon-library.com/images/product-icon-png/product-icon-png-11.jpg",
   },
 ];
 
 export default function Cart({ navigation }) {
   const [totalBill, setTotalBill] = useState(0);
+  const [currentCart, setCurrentCart] = useState([]);
+  const { barcode, setBarcode } = useContext(barcodeContext);
+
   const updateTotal = (amount, sign) => {
     if (sign) {
       setTotalBill((prevAmount) => prevAmount + amount);
@@ -64,6 +78,26 @@ export default function Cart({ navigation }) {
   const showScanHandler = () => {
     navigation.navigate("Scan Product");
   };
+  const { cartProducts } = useContext(cartProductsContext);
+  useEffect(() => {
+    const unsusbsribe = navigation.addListener("focus", () => {
+      setCurrentCart(cartProducts);
+    });
+    return unsusbsribe;
+  }, [navigation]);
+  // useEffect(() => {
+  //   const updatedCart = [...cartProducts];
+  //   setCurrentCart(
+  //     updatedCart.map((item) =>
+  //       item.id === barcode
+  //         ? {
+  //             ...item,
+  //             qty: item.qty + 1,
+  //           }
+  //         : item
+  //     )
+  //   );
+  // }, []);
   return (
     <View style={styles.container}>
       <CartNavbar
@@ -83,13 +117,16 @@ export default function Cart({ navigation }) {
             color="black"
           />
         </View>
-        <Text style={styles.totalBillText}>Total: {totalBill} Rs</Text>
+        <Text style={styles.totalBillText}>
+          Total: {totalBill.toFixed(2)} Rs
+        </Text>
         <FlatList
           style={styles.listWrapper}
-          data={CARTPRODUCTS}
+          data={currentCart}
           renderItem={(item) => (
             <CartItem data={item} updateTotal={updateTotal} />
           )}
+          keyExtractor={(item, index) => index.toString()}
         />
       </View>
     </View>

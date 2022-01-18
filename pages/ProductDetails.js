@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import CartNavbar from "../Components/CartNavbar";
 import { barcodeContext } from "../Components/Contexts/barcodeContext";
+import { cartProductsContext } from "../Components/Contexts/cartProductsContext";
 import Content from "../Components/ProductDetails/Content";
 
 const products = [
@@ -18,7 +19,7 @@ const products = [
     tags: ["Cooking", "Cutting"],
     location: "Aisle 3",
     inStock: "98",
-    barCode: "8964002488865",
+    barCode: "BITF18M005",
     modified: Date.now(),
     imgUrl:
       "https://icon-library.com/images/product-icon-png/product-icon-png-11.jpg",
@@ -62,38 +63,54 @@ const products = [
 export default function ProductDetails({ navigation }) {
   const { barcode, setBarcode } = useContext(barcodeContext);
   const [prod, setProd] = useState({ found: false, details: {} });
+  const { cartProducts, setCartProducts } = useContext(cartProductsContext);
 
   useEffect(() => {
     const unsusbsribe = navigation.addListener("focus", () => {
       // setProdDetails();
       setProd({ found: false, details: {} });
-      getProduct(barcode);
+      getProduct(barcode).then((res) =>
+        res.Id === ""
+          ? {}
+          : setProd({
+              found: true,
+              details: {
+                id: res.Id,
+                name: res.Name,
+                price: res.Price,
+                discount: res.Discount,
+                brand: res.Brand,
+                qty: 1,
+              },
+            })
+      );
     });
+
     return unsusbsribe;
   }, [navigation]);
+
   const showCartHandler = () => {
     navigation.navigate("Bill");
   };
   const showScanHandler = () => {
     navigation.navigate("Scan Product");
   };
-  const getProduct = (code) => {
-    products.map((prod) => {
-      prod.barCode === code ? setProd({ found: true, details: prod }) : {};
-    });
-  };
-  // const getProduct = (barcode) => {
-  //   const data = fetch("http://18.116.39.224:8080/product/", {
-  //     method: "POST",
-  //     body: JSON.stringify({ id: barcode }),
+  // const getProduct = (code) => {
+  //   products.map((prod) => {
+  //     prod.barCode === code ? setProd({ found: true, details: prod }) : {};
   //   });
-
-  //   // const data = await fetch("http://18.116.39.224:8080/product/", {method="POST", body:JSON.stringify({
-  //   //     id: query.itemId,
-  //   //     })});
-  //   // data.json().then(d=>{setItem(d); console.log(d)});
-  //   return data.json();
   // };
+  const getProduct = async (barcode) => {
+    const data = await fetch("http://18.116.39.224:8080/product/", {
+      method: "POST",
+      body: JSON.stringify({ id: barcode }),
+    });
+    return data.json();
+  };
+  const addToCartHandler = () => {
+    setCartProducts([...cartProducts, prod.details]);
+    showScanHandler();
+  };
   return (
     <View style={styles.container}>
       <CartNavbar
@@ -108,7 +125,7 @@ export default function ProductDetails({ navigation }) {
         showCart={true}
       />
       {prod.found ? (
-        <Content showScanFn={showScanHandler} prodDetails={prod.details} />
+        <Content addToCart={addToCartHandler} prodDetails={prod.details} />
       ) : (
         <View style={styles.containerNotFound}>
           <Text style={styles.notFoundText}>Product not found!</Text>
